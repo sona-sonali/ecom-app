@@ -5,11 +5,13 @@ import Button from '@mui/material/Button';
 import { useEffect, useState } from 'react';
 
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
 
     const [username, setUserName] = useState('')
     const [password, setPassword] = useState('')
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -17,7 +19,7 @@ const LandingPage = () => {
         if(token) {
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         }
-    }, [])
+    }, [navigate])
     
     //Will be called on click of login button 
     const handleLogin = async() => {
@@ -35,6 +37,7 @@ const LandingPage = () => {
             localStorage.setItem('token', token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             console.log('Log In Successfully,token:', token)
+            navigate('/product')
         } catch(error) {
             console.log('Error logging in:', error)
         }
