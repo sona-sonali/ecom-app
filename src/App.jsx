@@ -2,6 +2,7 @@ import LandingPage from "./components/LandingPage";
 import { Outlet, RouterProvider, createBrowserRouter } from "react-router-dom"
 import ProductPage from "./components/ProductPage";
 import Error from "./components/Error";
+import Cart from "./components/Cart";
 
 
 const appRouter = createBrowserRouter([
@@ -13,6 +14,11 @@ const appRouter = createBrowserRouter([
   {
     path: "/product",
     element: <ProductPage />,
+    errorElement: <Error />
+  },
+  {
+    path: "/cart",
+    element: <Cart />,
     errorElement: <Error />
   },
 ])

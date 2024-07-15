@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Box, CircularProgress, Button, Card, CardContent, CardMedia, Grid, Checkbox, FormControlLabel, List, ListItem } from '@mui/material';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../utils/CartSlice';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
@@ -8,6 +11,8 @@ const ProductPage = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [quantities, setQuantities] = useState({});
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
 
 
   // Fetch all products and categories on page load
@@ -76,7 +81,7 @@ const ProductPage = () => {
   const handleAdd = (id) => {
     setQuantities((prevQuantities) => ({
       ...prevQuantities,
-      [id]: prevQuantities[id] + 1,
+      [id]: (prevQuantities[id] || 0) + 1,
     }));
   };
   
@@ -84,12 +89,37 @@ const ProductPage = () => {
   const handleRemove = (id) => {
     setQuantities((prevQuantities) => ({
       ...prevQuantities,
-      [id]: Math.max(prevQuantities[id] - 1, 0),
+      [id]: Math.max((prevQuantities[id] || 0) - 1, 0),
     }));
   };
 
+  //To Add products to cart
+  const handleAddToCart = (product) => {
+    const newQuantity = quantities[product.id] || 0;
+    if(newQuantity > 0){
+      dispatch(addToCart({...product, quantity: newQuantity}))
+      console.log(newQuantity)
+      setQuantities((prev)=> ({...prev, [product.id]: 0 }));
+    }
+    console.log("Added to cart");
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Clear token from local storage
+    delete axios.defaults.headers.common['Authorization'] // Remove Authorization header
+    navigate('/') // Navigate to Log In page
+  }
+
   return (
     <Container maxWidth="lg">
+      <Box display="flex" justifyContent="space-between" alignItems="center" marginTop={4}>
+          <Typography variant="h4">
+            ECommerce
+          </Typography>
+          <Button variant="outlined" color="warning" onClick={handleLogout}>
+              Log Out
+          </Button>
+        </Box>
       <Box display="flex" marginTop={4}>
         <Box width="20%" paddingRight={2}>
           <Typography variant="h4" gutterBottom>
@@ -140,16 +170,27 @@ const ProductPage = () => {
                           ${product.price}
                         </Typography>
                         </Box>
-                        <Box display="flex" alignItems="center" marginTop={2}>
-                          <Button variant="contained" color="primary" onClick={() => handleAdd(product.id)}>
+                        <Box display="flex" alignItems="center" marginY={2}>
+                          <Button variant="outlined" color="primary" onClick={() => handleAdd(product.id)}>
                             +
                           </Button>
                           <Typography variant="body1" style={{ margin: '0 10px' }}>
-                            {quantities[product.id]}
+                            {quantities[product.id] || 0}
                           </Typography>
-                          <Button variant="contained" color="secondary" onClick={() => handleRemove(product.id)}>
+                          <Button variant="outlined" color="secondary" onClick={() => handleRemove(product.id)}>
                             -
                           </Button>
+                        </Box>
+                        <Box display="flex" alignItems="center" marginTop={2} justifyContent="center">
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={() => handleAddToCart(product)}
+                          disabled={!quantities[product.id]}
+                          style={{marginTop: '10px'}}
+                          >
+                            Add To Cart
+                        </Button>
                         </Box>
                       </CardContent>
                     </Card>
@@ -158,6 +199,11 @@ const ProductPage = () => {
               </Grid>
             )}
           </Box>
+        </Box>
+        <Box mt={4} marginLeft={4}>
+          <Button component={Link} to="/cart" variant="contained" color="primary">
+            Go To Cart
+          </Button>
         </Box>
       </Box>
     </Container>
