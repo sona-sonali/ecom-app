@@ -7,6 +7,11 @@ import Cart from "./components/Cart";
 
 const appRouter = createBrowserRouter([
   {
+    path: "/ecom-app",
+    element: <LandingPage />,
+    errorElement: <Error />
+  },
+  {
     path: "/",
     element: <LandingPage />,
     errorElement: <Error />
