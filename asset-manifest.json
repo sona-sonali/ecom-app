@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/ecom-app/static/js/main.c6095a87.js",
+    "index.html": "/ecom-app/index.html",
+    "main.c6095a87.js.map": "/ecom-app/static/js/main.c6095a87.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.c6095a87.js"
+  ]
+}
